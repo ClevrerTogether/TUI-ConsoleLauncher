@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace = "ohi.andre.consolelauncher"
-    compileSdk 34
+    compileSdk 36
 
     def keystorePropertiesFile = rootProject.file("local.properties")
     def keystoreProperties = new Properties()
