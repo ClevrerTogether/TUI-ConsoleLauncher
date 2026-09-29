@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "ohi.andre.consolelauncher"
+    namespace = "ohi.andre.consolelauncher"
     compileSdk 34
 
     def keystorePropertiesFile = rootProject.file("local.properties")
@@ -30,18 +30,18 @@ android {
     }
 
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
 
@@ -61,7 +61,7 @@ android {
     }
 
     lint {
-        checkReleaseBuilds false
+        checkReleaseBuilds = false
     }
 }
 
