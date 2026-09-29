@@ -245,3 +245,4 @@ low-risk for the AGP 8->9 jump.
   - Next: step 3, bump `targetSdk` to 36 and audit for API 35/36
     behavior changes (mandatory edge-to-edge display, predictive back
     gesture, further API 36 enforcement) before testing on-device.
+  - User tested the compileSdk-36 APK on-device -- confirmed working.
