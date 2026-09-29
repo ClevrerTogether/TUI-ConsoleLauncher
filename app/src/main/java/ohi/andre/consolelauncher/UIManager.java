@@ -22,6 +22,9 @@ import android.os.Handler;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -967,7 +970,19 @@ public class UIManager implements OnTouchListener {
 
         int[] displayMargins = getListOfIntValues(XMLPrefsManager.get(Ui.display_margin_mm), 4, 0);
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        rootView.setPadding(Tuils.mmToPx(metrics, displayMargins[0]), Tuils.mmToPx(metrics, displayMargins[1]), Tuils.mmToPx(metrics, displayMargins[2]), Tuils.mmToPx(metrics, displayMargins[3]));
+        final int marginLeft = Tuils.mmToPx(metrics, displayMargins[0]);
+        final int marginTop = Tuils.mmToPx(metrics, displayMargins[1]);
+        final int marginRight = Tuils.mmToPx(metrics, displayMargins[2]);
+        final int marginBottom = Tuils.mmToPx(metrics, displayMargins[3]);
+
+        // Edge-to-edge is mandatory from API 35+ (unavoidable on API 36+): the system no
+        // longer auto-insets content away from the status/nav bars, so apply those insets
+        // as padding ourselves, combined with the user-configurable display_margin_mm.
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(marginLeft + systemBars.left, marginTop + systemBars.top, marginRight + systemBars.right, marginBottom + systemBars.bottom);
+            return insets;
+        });
 
         labelSizes[Label.time.ordinal()] = XMLPrefsManager.getInt(Ui.time_size);
         labelSizes[Label.ram.ordinal()] = XMLPrefsManager.getInt(Ui.ram_size);

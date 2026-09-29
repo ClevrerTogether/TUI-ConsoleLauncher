@@ -84,7 +84,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Custom.Solid"
-        android:usesCleartextTraffic="false">
+        android:usesCleartextTraffic="false"
+        android:enableOnBackInvokedCallback="false">
 
         <provider
             android:name=".tuils.GenericFileProvider"
