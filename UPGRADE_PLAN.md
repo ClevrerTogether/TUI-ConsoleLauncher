@@ -178,3 +178,5 @@ Step by step, in small verifiable increments:
     justification for Play Console, and declare the Launcher-app
     exemption for `QUERY_ALL_PACKAGES` -- both submission-time Play
     Console tasks, not code.
+  - User tested the updated APK (Device Admin removal) on-device --
+    confirmed working, including double-tap and `tui rm`.
