@@ -146,3 +146,35 @@ Step by step, in small verifiable increments:
   - No other actionable findings. All known crash-risk and code-level
     security items from this effort are now resolved; what remains is
     item 4 (Play Store policy decisions -- not code).
+- 2026-09-29: Investigated what each of item 4's flagged
+  permissions/features actually does, to inform the Play Store
+  decision:
+  - `QUERY_ALL_PACKAGES`: used exactly as a launcher should (enumerating
+    `CATEGORY_LAUNCHER` activities for the app drawer, `LauncherApps`
+    when set as default launcher). Play has an explicit "Core Launcher
+    functionality" declaration for this. Decision: keep, declare in
+    Play Console at submission time. No code change.
+  - `MANAGE_EXTERNAL_STORAGE`: genuinely used by the terminal's
+    `cd`/file commands and the file-editor activity to browse/edit
+    files anywhere in shared storage (the app's own data already uses
+    scoped storage and needs no permission). Decision: keep as a core
+    terminal-emulator feature, submit Play Console's All Files Access
+    justification form at submission time. No code change yet -- the
+    justification writeup is a submission-time task.
+  - Device Admin: the *entire* feature it powered was one opt-in
+    preference (lock screen on double-tap) plus admin cleanup on
+    self-uninstall -- no password policy, no wipe. Decision: remove
+    entirely rather than fight Play's heavy scrutiny of Device Admin
+    for consumer apps. Removed `PolicyReceiver.java`,
+    `res/xml/policy.xml`, the manifest `BIND_DEVICE_ADMIN` receiver,
+    the double-tap-to-lock logic in `UIManager.java` (the separate
+    double-tap-to-run-a-command feature is untouched), `Tuils.
+    requestAdmin()`, the `double_tap_lock` preference, the
+    `admin_permission` string, and the now-unneeded
+    `removeActiveAdmin()` cleanup call in `tui rm`. Verified via a
+    clean javac compile of both flavors including manifest/resource
+    processing. Committed as `b166939`.
+  - Remaining before Play Store submission: write the All Files Access
+    justification for Play Console, and declare the Launcher-app
+    exemption for `QUERY_ALL_PACKAGES` -- both submission-time Play
+    Console tasks, not code.
