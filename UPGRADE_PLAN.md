@@ -273,3 +273,7 @@ low-risk for the AGP 8->9 jump.
     Android version.
   - Verified via a clean assemble of both fdroid and playstore debug
     APKs. Committed as `dbd7c03`.
+  - User tested the targetSdk-36 APK on-device -- confirmed working,
+    including layout around system bars and back-button behavior. All
+    three steps of the target-API-36 plan are now complete; the app
+    meets Google Play's current minimum (API 36) for new submissions.
