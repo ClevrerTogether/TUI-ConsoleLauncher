@@ -233,3 +233,15 @@ low-risk for the AGP 8->9 jump.
     Console tasks, not code.
   - User tested the updated APK (Device Admin removal) on-device --
     confirmed working, including double-tap and `tui rm`.
+- 2026-09-29: User pointed out the target-API-level plan above was
+  stale relative to actual current Play/Android state (Android 17
+  shipped, Play's API 36 deadline already active) -- verified live via
+  web search rather than trusting training-cutoff knowledge, confirming
+  the "CRITICAL" section above. Step 1 (AGP/Gradle toolchain upgrade)
+  done and logged separately above. Step 2 done: bumped `compileSdk`
+  34 -> 36 (installed SDK `platforms;android-36` first). `targetSdk`
+  intentionally left at 34 for this step. Verified via a clean
+  `assemble*Debug` of both flavors. Committed as `e0845f5`.
+  - Next: step 3, bump `targetSdk` to 36 and audit for API 35/36
+    behavior changes (mandatory edge-to-edge display, predictive back
+    gesture, further API 36 enforcement) before testing on-device.
