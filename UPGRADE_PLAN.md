@@ -107,7 +107,11 @@ Step by step, in small verifiable increments:
     attribute (no-op since `targetSdk >= 30`).
   - All three verified via a clean javac compile of both `fdroid` and
     `playstore` flavors.
+  - Item 6 reassessed, not a real issue: `TorchManager.java` already
+    routes to `Flashlight2` (modern `CameraManager.setTorchMode` /
+    Camera2 API) for any device on API 23+; the deprecated Camera1
+    `Flashlight1` path only ever runs on API 21-22 (Android 5.0/5.1),
+    an effectively nonexistent population. No change made.
   - Remaining: item 4 (Play Store policy review for
     `MANAGE_EXTERNAL_STORAGE`/`QUERY_ALL_PACKAGES`/Device Admin -- not a
-    code fix, needs a submission-time decision) and item 6 (Camera1 ->
-    Camera2 modernization in `Flashlight1.java`, low urgency).
+    code fix, needs a submission-time decision).
