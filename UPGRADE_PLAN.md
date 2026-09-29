@@ -35,6 +35,59 @@ Step by step, in small verifiable increments:
 - Play Store submission work comes after the app is verified stable via APK
   testing, not in parallel.
 
+## CRITICAL: target API level is now out of date (found 2026-09-29)
+
+Google Play requires, as of 2026-08-31 (extension available to 2026-11-01):
+- **New apps/updates**: must target **API 36** (Android 16) to be published.
+- **Already-published apps**: must target at least **API 35** (Android 15)
+  to stay visible to users on newer devices.
+
+This app is unpublished, so it counts as a **new app** — it needs **API 36**
+to be submittable at all, not just 35. Current baseline (API 34, AGP 8.2.0,
+Gradle 8.2) is below this bar. Also for context: Android 17 "Cinnamon Bun"
+(API 37) shipped 2026-06-16; Play won't require API 37 until 2027-08.
+
+compileSdk 36 requires **AGP 9.x and Gradle 9.1+** (AGP 8.2 caps out around
+compileSdk 34/35) — this is a build-toolchain major-version upgrade, not
+just a number bump in `app/build.gradle`.
+
+Revised plan, step by step:
+1. Upgrade AGP (root `build.gradle` classpath) + Gradle wrapper only, keep
+   compileSdk/targetSdk at 34. Verify clean compile before touching the SDK
+   level, to isolate toolchain-upgrade risk from API-level risk.
+2. Bump `compileSdk` to 36.
+3. Bump `targetSdk` to 36; audit/fix for API 35/36 behavior changes
+   (mandatory edge-to-edge display since API 35, predictive back gesture
+   handling, further API 36 enforcement).
+4. Build and test on-device at each stage, not just at the end.
+
+Chosen versions (checked live 2026-09-29, not from training-cutoff memory):
+AGP **9.3.0** (July 2026 release; supports up to API 37; requires Gradle
+9.5.0+, JDK 17) + Gradle **9.7.1** (Aug 2026 release) — deliberately not
+the bleeding-edge AGP 9.4.0/Gradle 9.8.0 (both days-old at the time of
+picking), to avoid the least field-tested releases.
+
+Pre-flight compatibility check against AGP 9.0's breaking-changes list
+(app is pure Java, no Kotlin, so KGP/built-in-Kotlin changes don't apply):
+confirmed no `switch` on `R.*` constants, no NDK/externalNativeBuild, no
+`dexOptions`/`applicationVariants`/`variantFilter`/`testServer`/
+`deviceProvider`/`generatePureSplits` usage anywhere in the build files or
+Java source — this project's build.gradle is minimal/standard, so it is
+low-risk for the AGP 8->9 jump.
+
+- 2026-09-29: Step 1 done -- upgraded AGP 8.2.0 -> 9.3.0 and Gradle
+  wrapper 8.2 -> 9.7.1 (`compileSdk`/`targetSdk` untouched, still 34).
+  Also installed SDK `build-tools;36.0.0` (AGP 9's default requirement).
+  Removed `android.enableJetifier=true` (deprecated in AGP 9.3,
+  unnecessary -- no legacy support-library deps). Fixed Groovy DSL
+  space-assignment syntax in `app/build.gradle` (`namespace`,
+  `buildConfig`, `signingConfig`, `shrinkResources`,
+  `checkReleaseBuilds`) flagged as removed-in-Gradle-10 by
+  `--warning-mode all`; re-checked afterward, zero such warnings
+  remain. Verified via a clean `assemble*Debug` of both flavors on the
+  new toolchain. Committed as `9ef01e8`.
+  - Next: step 2, bump `compileSdk` to 36.
+
 ## Environment notes
 
 - This sandbox mounts the repo via virtiofs (`\wsl.localhost\...`), which
