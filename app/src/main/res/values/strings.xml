@@ -179,6 +179,8 @@
     <string name="output_data">Mobile Data active:</string>
     <string name="output_bluetooth">Bluetooth active:</string>
     <string name="output_bluetooth_unavailable">Bluetooth is not available on this device</string>
+    <string name="output_bluetooth_request_enable">Requesting to enable bluetooth</string>
+    <string name="output_bluetooth_manual_disable">Android no longer allows apps to disable bluetooth directly; opening system settings</string>
     <string name="output_airplane">Airplane mode active:</string>
 
     <!-- music -->

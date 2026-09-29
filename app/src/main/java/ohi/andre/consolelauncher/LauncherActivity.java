@@ -219,6 +219,9 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                     permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS);
                 }
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    permissionsToRequest.add(Manifest.permission.READ_MEDIA_AUDIO);
+                }
             }
         }
 
