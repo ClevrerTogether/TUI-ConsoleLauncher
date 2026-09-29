@@ -246,3 +246,30 @@ low-risk for the AGP 8->9 jump.
     behavior changes (mandatory edge-to-edge display, predictive back
     gesture, further API 36 enforcement) before testing on-device.
   - User tested the compileSdk-36 APK on-device -- confirmed working.
+- 2026-09-29: Step 3 done -- bumped `targetSdk` 34 -> 36. Audited
+  window-inset and back-press handling first (forked research), which
+  found the app had zero edge-to-edge/inset-handling code and several
+  custom `onBackPressed()` behaviors with no predictive-back migration.
+  Verified live (not training-cutoff knowledge) exactly what API 36
+  changes by default: edge-to-edge is mandatory/unavoidable at API 36
+  (opt-out attribute disabled), and `onBackPressed()`/`KEYCODE_BACK`
+  stop firing by default for apps targeting API 36 on an API 36+
+  device.
+  - Fixed edge-to-edge: added a `ViewCompat.setOnApplyWindowInsetsListener`
+    on `rootView` in `UIManager.java` that applies `systemBars()` insets
+    as padding, composed with (not replacing) the existing
+    user-configurable `Ui.display_margin_mm` padding.
+  - Back gesture: user chose the quick, Google-documented interim
+    opt-out (`android:enableOnBackInvokedCallback="false"` in the
+    manifest) over a full `OnBackPressedCallback` migration, to keep
+    the app's several custom back-button behaviors (command-history
+    cycling in `TerminalManager`, long-press-back in
+    `LauncherActivity`) working unchanged for now.
+  - **Follow-up (not yet done)**: migrate `LauncherActivity` ->
+    `UIManager` -> `TerminalManager`'s back-button chain to
+    `OnBackPressedCallback` properly, since Google deprecated/removed
+    the analogous edge-to-edge opt-out one API level after introducing
+    it -- the back-gesture opt-out may follow the same path in a future
+    Android version.
+  - Verified via a clean assemble of both fdroid and playstore debug
+    APKs. Committed as `dbd7c03`.
