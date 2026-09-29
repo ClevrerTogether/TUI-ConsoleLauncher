@@ -10,7 +10,6 @@
     <string name="output_rate">Thank you!</string>
     <string name="start_notification">T-UI started</string>
     <string name="tui_running">T-UI is running</string>
-    <string name="admin_permission">Lock the screen on double tap</string>
     <string name="tui_reset">t-ui reset to default settings</string>
     <string name="copied">Copied:</string>
     <string name="tui_busy">t-ui is busy, use \"ctrlc\" to stop the process</string>

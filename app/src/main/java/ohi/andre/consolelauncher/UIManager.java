@@ -3,10 +3,8 @@ package ohi.andre.consolelauncher;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
-import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -81,7 +79,6 @@ import ohi.andre.consolelauncher.tuils.interfaces.CommandExecuter;
 import ohi.andre.consolelauncher.tuils.interfaces.OnBatteryUpdate;
 import ohi.andre.consolelauncher.tuils.interfaces.OnRedirectionListener;
 import ohi.andre.consolelauncher.tuils.interfaces.OnTextChanged;
-import ohi.andre.consolelauncher.tuils.stuff.PolicyReceiver;
 
 public class UIManager implements OnTouchListener {
 
@@ -119,8 +116,6 @@ public class UIManager implements OnTouchListener {
 
     private Handler handler;
 
-    private DevicePolicyManager policy;
-    private ComponentName component;
     private GestureDetectorCompat gestureDetector;
 
     SharedPreferences preferences;
@@ -764,7 +759,6 @@ public class UIManager implements OnTouchListener {
     private TextView terminalView;
 
     private String doubleTapCmd;
-    private boolean lockOnDbTap;
 
     private BroadcastReceiver receiver;
 
@@ -886,9 +880,6 @@ public class UIManager implements OnTouchListener {
 
         LocalBroadcastManager.getInstance(context.getApplicationContext()).registerReceiver(receiver, filter);
 
-        policy = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        component = new ComponentName(context, PolicyReceiver.class);
-
         mContext = context;
 
         preferences = mContext.getSharedPreferences(PREFS_NAME, 0);
@@ -915,11 +906,8 @@ public class UIManager implements OnTouchListener {
 
         clearOnLock = XMLPrefsManager.getBoolean(Behavior.clear_on_lock);
 
-        lockOnDbTap = XMLPrefsManager.getBoolean(Behavior.double_tap_lock);
         doubleTapCmd = XMLPrefsManager.get(Behavior.double_tap_cmd);
-        if(!lockOnDbTap && doubleTapCmd == null) {
-            policy = null;
-            component = null;
+        if(doubleTapCmd == null) {
             gestureDetector = null;
         } else {
             gestureDetector = new GestureDetectorCompat(mContext, new GestureDetector.OnGestureListener() {
@@ -970,17 +958,6 @@ public class UIManager implements OnTouchListener {
                         mTerminalAdapter.setInput(doubleTapCmd);
                         mTerminalAdapter.simulateEnter();
                         mTerminalAdapter.setInput(input);
-                    }
-
-                    if(lockOnDbTap) {
-                        boolean admin = policy.isAdminActive(component);
-
-                        if (!admin) {
-                            Intent i = Tuils.requestAdmin(component, mContext.getString(R.string.admin_permission));
-                            mContext.startActivity(i);
-                        } else {
-                            policy.lockNow();
-                        }
                     }
 
                     return true;

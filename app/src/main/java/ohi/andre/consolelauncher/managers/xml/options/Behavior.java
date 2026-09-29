@@ -15,22 +15,6 @@ import ohi.andre.consolelauncher.tuils.Tuils;
 
 public enum Behavior implements XMLPrefsSave {
 
-    double_tap_lock {
-        @Override
-        public String defaultValue() {
-            return "true";
-        }
-
-        @Override
-        public String info() {
-            return "If true, t-ui will lock the screen on double tap";
-        }
-
-        @Override
-        public String type() {
-            return XMLPrefsSave.BOOLEAN;
-        }
-    },
     double_tap_cmd {
         @Override
         public String defaultValue() {

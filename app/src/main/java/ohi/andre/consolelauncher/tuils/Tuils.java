@@ -3,7 +3,6 @@ package ohi.andre.consolelauncher.tuils;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
-import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -415,13 +414,6 @@ public class Tuils {
         Uri uri = Uri.fromParts("package", packageName, null);
         intent.setData(uri);
         c.startActivity(intent);
-    }
-
-    public static Intent requestAdmin(ComponentName component, String explanation) {
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, explanation);
-        return intent;
     }
 
     public static Intent webPage(String url) {
