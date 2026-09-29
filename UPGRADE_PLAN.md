@@ -277,3 +277,28 @@ low-risk for the AGP 8->9 jump.
     including layout around system bars and back-button behavior. All
     three steps of the target-API-36 plan are now complete; the app
     meets Google Play's current minimum (API 36) for new submissions.
+- 2026-09-29: Read Google's full "Behavior changes: apps targeting
+  Android 16" doc (all 19 items, not just edge-to-edge/predictive-back)
+  and checked each against this codebase, rather than assuming our two
+  targeted fixes covered everything:
+  - Confirmed not applicable: health/fitness permissions, GPU syscall
+    filtering, Bluetooth bonding APIs, MediaStore.getVersion() lockdown,
+    NsdManager/raw-socket local-network permission, photo picker
+    pre-selection, elegantTextHeight. None used anywhere in this app.
+  - Confirmed no native `.so` libraries in the built APK, so the
+    Android 15+ 16 KB page size requirement doesn't apply either.
+  - Two minor items found, both accepted as-is (no code change, low
+    impact, documented rather than fixed):
+    - `scheduleAtFixedRate` watchdog timer in `libsuperuser/Shell.java`
+      (1s command-timeout watchdog) will skip catch-up ticks after the
+      app resumes from being backgrounded/frozen on Android 16 -- minor
+      timing nuance, not a functional bug.
+    - The user-configurable screen-orientation-lock preference
+      (`Behavior.orientation`, `setRequestedOrientation()` in
+      `LauncherActivity.java`) is silently ignored on large screens
+      (>=600dp, tablets/foldables) on Android 16+ -- OS-level
+      enforcement, not realistically worth fighting (the escape hatch
+      is temporary and Play policy is pushing this direction anyway).
+      Low impact for a phone-first launcher.
+  - With this, the target-API-36 work is genuinely complete, not just
+    "the two obvious things fixed."
