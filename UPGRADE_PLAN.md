@@ -91,3 +91,23 @@ Step by step, in small verifiable increments:
     compile of both `fdroid` and `playstore` flavors. Committed as
     `fbf2a1f`.
   - Next: item 2 (bluetooth command) or item 3 (music permission).
+  - Fixed item 2: `bluetooth` command now checks `BLUETOOTH_CONNECT`
+    (API 31+) before touching the adapter, and on API 33+ hands off to
+    system UI instead of calling the now-no-op `enable()`/`disable()`
+    (`ACTION_REQUEST_ENABLE` to enable, `ACTION_BLUETOOTH_SETTINGS` to
+    disable, since there is no programmatic disable API left). Added
+    `BLUETOOTH_CONNECT` to the manifest and two new strings
+    (`output_bluetooth_request_enable`, `output_bluetooth_manual_disable`).
+  - Fixed item 3: added `READ_MEDIA_AUDIO` to the manifest and to the
+    startup permission-request block in `LauncherActivity.java`
+    (API 33+), alongside the existing `POST_NOTIFICATIONS` request --
+    matches the existing bulk-request pattern, so `MusicManager2`'''s
+    `MediaStore` query is resolved by the time it runs.
+  - Fixed item 5: removed the dead `requestLegacyExternalStorage="true"`
+    attribute (no-op since `targetSdk >= 30`).
+  - All three verified via a clean javac compile of both `fdroid` and
+    `playstore` flavors.
+  - Remaining: item 4 (Play Store policy review for
+    `MANAGE_EXTERNAL_STORAGE`/`QUERY_ALL_PACKAGES`/Device Admin -- not a
+    code fix, needs a submission-time decision) and item 6 (Camera1 ->
+    Camera2 modernization in `Flashlight1.java`, low urgency).
