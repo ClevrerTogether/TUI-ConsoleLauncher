@@ -115,3 +115,34 @@ Step by step, in small verifiable increments:
   - Remaining: item 4 (Play Store policy review for
     `MANAGE_EXTERNAL_STORAGE`/`QUERY_ALL_PACKAGES`/Device Admin -- not a
     code fix, needs a submission-time decision).
+- 2026-09-29: User tested the built APK on-device -- confirmed working.
+  Ran a deeper audit (dependency versions, command-injection risk in
+  shell execution, other missed registerReceiver/PendingIntent gaps,
+  hardcoded secrets). Findings:
+  - No missed `registerReceiver` export-flag gaps -- full sweep confirms
+    the four already fixed are the only real (non-`LocalBroadcastManager`,
+    non-null-sticky) receivers in the codebase.
+  - No command-injection risk in shell execution: `libsuperuser`'s
+    `Runtime.exec` runs a fixed shell binary array, not raw strings;
+    the one other exec call site concatenates an internal constant, not
+    user input. The app's "run typed commands" terminal feature
+    intentionally executes user-typed shell commands -- expected
+    product behavior, not a bug.
+  - No WebView, no deprecated TelephonyManager device-ID calls, no
+    deprecated WifiManager mutation APIs, no live hardcoded `http://`
+    endpoints.
+  - Dependencies (okhttp 4.12.0, jsoup 1.17.2, json-path 2.9.0,
+    appcompat 1.6.1, material 1.11.0) have no confidently-attributable
+    CVEs; appcompat/material trail current AndroidX by a few minor
+    versions but aren't security-flagged. `htmlcleaner` and the
+    single-author `CompareString2` lib are too low-visibility to assess
+    without a manual Maven Central check.
+  - Found and fixed: a fully commented-out debug block in
+    `MainManager.java` had a hardcoded OpenWeatherMap API key baked
+    into a literal URL. Dead code (never executed), but no reason to
+    leave a leaked key in source -- removed. The active weather feature
+    already reads its key from user config, unaffected. Committed as
+    `77d7444`.
+  - No other actionable findings. All known crash-risk and code-level
+    security items from this effort are now resolved; what remains is
+    item 4 (Play Store policy decisions -- not code).
