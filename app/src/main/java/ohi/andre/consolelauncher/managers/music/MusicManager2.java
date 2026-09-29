@@ -70,7 +70,11 @@ public class MusicManager2 implements MediaController.MediaPlayerControl {
             action = Intent.ACTION_HEADSET_PLUG;
         }
 
-        mContext.getApplicationContext().registerReceiver(headsetBroadcast, new IntentFilter(action));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mContext.getApplicationContext().registerReceiver(headsetBroadcast, new IntentFilter(action), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            mContext.getApplicationContext().registerReceiver(headsetBroadcast, new IntentFilter(action));
+        }
 
         init();
     }

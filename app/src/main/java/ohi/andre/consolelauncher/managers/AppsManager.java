@@ -170,7 +170,11 @@ public class AppsManager implements XMLPrefsElement {
         intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         intentFilter.addDataScheme("package");
 
-        c.registerReceiver(appsBroadcast, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            c.registerReceiver(appsBroadcast, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            c.registerReceiver(appsBroadcast, intentFilter);
+        }
     }
 
     public void fill() {

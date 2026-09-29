@@ -1578,7 +1578,11 @@ public class UIManager implements OnTouchListener {
             }
         };
 
-        mContext.getApplicationContext().registerReceiver(lockReceiver, theFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mContext.getApplicationContext().registerReceiver(lockReceiver, theFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            mContext.getApplicationContext().registerReceiver(lockReceiver, theFilter);
+        }
     }
 
     private void unregisterLockReceiver() {

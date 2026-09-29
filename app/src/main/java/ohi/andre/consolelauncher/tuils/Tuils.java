@@ -280,7 +280,11 @@ public class Tuils {
             iFilter.addAction(Intent.ACTION_POWER_CONNECTED);
             iFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
 
-            context.registerReceiver(batteryReceiver, iFilter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(batteryReceiver, iFilter, Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                context.registerReceiver(batteryReceiver, iFilter);
+            }
 
             batteryUpdate = listener;
         } catch (Exception e) {
