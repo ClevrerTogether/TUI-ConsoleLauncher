@@ -976,11 +976,16 @@ public class UIManager implements OnTouchListener {
         final int marginBottom = Tuils.mmToPx(metrics, displayMargins[3]);
 
         // Edge-to-edge is mandatory from API 35+ (unavoidable on API 36+): the system no
-        // longer auto-insets content away from the status/nav bars, so apply those insets
-        // as padding ourselves, combined with the user-configurable display_margin_mm.
+        // longer auto-insets content away from the status/nav bars, and windowSoftInputMode's
+        // adjustResize no longer auto-resizes the window for the keyboard either -- both need
+        // to be applied as padding ourselves, combined with the user-configurable
+        // display_margin_mm. Use the larger of the nav bar / IME bottom inset so the input
+        // field clears whichever is actually showing.
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(marginLeft + systemBars.left, marginTop + systemBars.top, marginRight + systemBars.right, marginBottom + systemBars.bottom);
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            int bottomInset = Math.max(systemBars.bottom, ime.bottom);
+            v.setPadding(marginLeft + systemBars.left, marginTop + systemBars.top, marginRight + systemBars.right, marginBottom + bottomInset);
             return insets;
         });
 
