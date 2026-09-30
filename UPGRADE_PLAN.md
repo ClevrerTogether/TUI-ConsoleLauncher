@@ -302,3 +302,13 @@ low-risk for the AGP 8->9 jump.
       Low impact for a phone-first launcher.
   - With this, the target-API-36 work is genuinely complete, not just
     "the two obvious things fixed."
+- 2026-09-30: User found a real regression from the edge-to-edge fix:
+  the on-screen keyboard covered the command input field instead of
+  the layout shifting up. Root cause: the previous fix only applied
+  `systemBars()` insets as padding; it missed that
+  `windowSoftInputMode`'s `adjustResize` no longer auto-resizes the
+  window for the keyboard once edge-to-edge is enforced -- the IME
+  inset needs the same manual treatment. Fixed by also reading
+  `WindowInsetsCompat.Type.ime()` and using the larger of the nav-bar /
+  keyboard bottom inset as bottom padding. Verified via a clean
+  assemble. Committed as `dd8f936`.
